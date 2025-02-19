@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"embed"
 	"errors"
 	"fmt"
@@ -124,7 +125,7 @@ func startServer(c *cli.Context) error {
 
 	go func() {
 		logger.Info("server start", zap.String("host", fmt.Sprintf("http://%s:%d", conf.Server.Host, conf.Server.Port)))
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("server run error", zap.Error(err))
 			quit <- syscall.SIGTERM
 		}
@@ -149,6 +150,11 @@ func startServer(c *cli.Context) error {
 }
 
 func getMigrate() (*migrate.Migrate, error) {
+	// 首先确保数据库存在
+	if err := ensureDBExists(); err != nil {
+		return nil, fmt.Errorf("failed to ensure database exists: %w", err)
+	}
+
 	// 使用嵌入的迁移文件创建 source.Driver
 	d, err := iofs.New(migrationFS, "migrations")
 	if err != nil {
@@ -157,7 +163,7 @@ func getMigrate() (*migrate.Migrate, error) {
 
 	// 构建数据库 DSN
 	dsn := fmt.Sprintf("mysql://%s",
-		conf.Database.DSN)
+		conf.Database.GetDSN())
 
 	// 创建 migrate 实例
 	m, err := migrate.NewWithSourceInstance("iofs", d, dsn)
@@ -166,6 +172,32 @@ func getMigrate() (*migrate.Migrate, error) {
 	}
 
 	return m, nil
+}
+
+func ensureDBExists() error {
+	// 构建不带数据库名的 DSN
+	dbConfig := conf.Database
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/",
+		dbConfig.Username,
+		dbConfig.Password,
+		dbConfig.Host,
+		dbConfig.Port)
+
+	// 连接 MySQL（不指定数据库）
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return fmt.Errorf("failed to connect to mysql: %w", err)
+	}
+	defer db.Close()
+
+	// 创建数据库（如果不存在）
+	createDBSQL := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci", dbConfig.Database)
+	if _, err := db.Exec(createDBSQL); err != nil {
+		return fmt.Errorf("failed to create database: %w", err)
+	}
+
+	logger.Info("database created or already exists", zap.String("database", dbConfig.Database))
+	return nil
 }
 
 func migrateUp(c *cli.Context) error {
