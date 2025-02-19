@@ -20,7 +20,7 @@ type Role struct {
 
 // TableName 指定表名
 func (Role) TableName() string {
-	return "role"
+	return "roles"
 }
 
 type RoleQuery struct {
