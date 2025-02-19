@@ -8,6 +8,7 @@ import (
 // UserBase 基础字段
 type UserBase struct {
 	Nickname string `json:"nickname"`
+	Username string `json:"username"`
 	Phone    string `json:"phone"`
 	Email    string `json:"email"`
 	Avatar   string `json:"avatar"`
@@ -65,6 +66,8 @@ func (req *UpdateUserRequest) ToModel() *model.User {
 		Phone:    req.Phone,
 		Email:    req.Email,
 		Status:   req.Status,
+		Username: req.Username,
+		Remark:   req.Remark,
 		// UpdatedBy: updatedBy,
 	}
 }
