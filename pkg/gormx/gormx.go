@@ -20,7 +20,7 @@ func NewDB(conf *config.Config, l *log.Logger) *gorm.DB {
 
 	logger := zapgorm2.New(l.Logger)
 	driver := conf.Database.Driver
-	dsn := conf.Database.DSN
+	dsn := conf.Database.GetDSN()
 
 	// GORM doc: https://gorm.io/docs/connecting_to_the_database.html
 	switch driver {
