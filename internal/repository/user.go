@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"errors"
+	"time"
+
 	"gorm.io/gorm"
 
 	"github.com/wxlbd/gin-casbin-admin/internal/service"
@@ -27,6 +29,10 @@ func (r *userRepository) WithTx(tx *Query) service.UserRepository {
 }
 
 func (r *userRepository) Create(ctx context.Context, user *model.User) error {
+	// 如果 LoginTime 是零值，设置为当前时间
+	if user.LoginTime.IsZero() {
+		user.LoginTime = time.Now()
+	}
 	return r.query.WithContext(ctx).User.Create(user)
 }
 
