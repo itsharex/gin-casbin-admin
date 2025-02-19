@@ -1,10 +1,10 @@
 -- 插入初始角色数据
-INSERT INTO `role` (`id`, `name`, `code`, `status`, `sort`, `created_by`, `updated_by`, `created_at`, `updated_at`,
+INSERT INTO `roles` (`id`, `name`, `code`, `status`, `sort`, `created_by`, `updated_by`, `created_at`, `updated_at`,
                     `remark`)
 VALUES (1, '超级管理员', 'SuperAdmin', 1, 0, 0, 0, '2025-01-15 11:22:58', '2025-01-15 11:22:58', '');
 
 -- 插入初始用户数据
-INSERT INTO `user` (`id`, `username`, `password`, `user_type`, `nickname`, `phone`, `email`, `avatar`, `signed`,
+INSERT INTO `users` (`id`, `username`, `password`, `user_type`, `nickname`, `phone`, `email`, `avatar`, `signed`,
                     `status`, `login_ip`, `login_time`, `created_by`, `updated_by`, `created_at`, `updated_at`,
                     `remark`)
 VALUES (1, 'admin', '$2y$10$T3Po5Ufu1pKiKczWqp.dbOOjmeZ4H3Oj0daATqlqXsZOvrRW2s2IS', '100', '创始人', '16858888988',

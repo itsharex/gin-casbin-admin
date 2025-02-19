@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS `dict_types` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='字典类型表';
 
--- 创建 role 表
-CREATE TABLE IF NOT EXISTS `role` (
+-- 创建 roles 表
+CREATE TABLE IF NOT EXISTS `roles` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色名称',
   `code` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色代码',
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `sys_menus` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限表';
 
 -- 创建 user 表
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID,主键',
   `username` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户名',
   `password` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
@@ -144,8 +144,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `updated_at` datetime DEFAULT NULL,
   `remark` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_username_unique` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户信息表';
+  UNIQUE KEY `idx_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 创建 user_login_log 表
 CREATE TABLE IF NOT EXISTS `user_login_log` (
