@@ -1,66 +1,69 @@
-//package config
+// package config
 //
-//import (
+// import (
+//
 //	"fmt"
 //	"github.com/spf13/viper"
 //	"os"
 //	"time"
-//)
 //
-//type Config struct {
-//	Server ServerConfig `mapstructure:"server"`
-//	JWT    JWTConfig    `mapstructure:"jwt"`
-//	Redis  RedisConfig  `mapstructure:"redis"`
-//}
+// )
 //
-//type ServerConfig struct {
-//	Port int    `mapstructure:"port"`
-//	Mode string `mapstructure:"mode"`
-//}
-//
-//type JWTConfig struct {
-//	AccessSecret  string        `mapstructure:"access_secret"`
-//	RefreshSecret string        `mapstructure:"refresh_secret"`
-//	AccessExpire  time.Duration `mapstructure:"access_expire"`
-//	RefreshExpire time.Duration `mapstructure:"refresh_expire"`
-//	Issuer        string        `mapstructure:"issuer"`
-//}
-//
-//type RedisConfig struct {
-//	Addr     string `mapstructure:"addr"`
-//	Password string `mapstructure:"password"`
-//	Database       int    `mapstructure:"db"`
-//}
-//
-//type LogConfig struct {
-//	LogLevel    string `mapstructure:"log_level"`
-//	Encoding    string `mapstructure:"encoding"`
-//	LogFileName string `mapstructure:"log_file_name"`
-//	MaxSize     int    `mapstructure:"max_size"`
-//	MaxAge      int    `mapstructure:"max_age"`
-//	MaxBackups  int    `mapstructure:"max_backups"`
-//}
-//
-//func NewConfig(p string) *viper.Viper {
-//	envConf := os.Getenv("APP_CONF")
-//	if envConf == "" {
-//		envConf = p
+//	type Config struct {
+//		Server ServerConfig `mapstructure:"server"`
+//		JWT    JWTConfig    `mapstructure:"jwt"`
+//		Redis  RedisConfig  `mapstructure:"redis"`
 //	}
-//	fmt.Println("load conf file:", envConf)
-//	return getConfig(envConf)
-//}
 //
-//func getConfig(path string) *viper.Viper {
-//	conf := viper.New()
-//	conf.SetConfigFile(path)
-//	err := conf.ReadInConfig()
+//	type ServerConfig struct {
+//		Port int    `mapstructure:"port"`
+//		Mode string `mapstructure:"mode"`
+//	}
+//
+//	type JWTConfig struct {
+//		AccessSecret  string        `mapstructure:"access_secret"`
+//		RefreshSecret string        `mapstructure:"refresh_secret"`
+//		AccessExpire  time.Duration `mapstructure:"access_expire"`
+//		RefreshExpire time.Duration `mapstructure:"refresh_expire"`
+//		Issuer        string        `mapstructure:"issuer"`
+//	}
+//
+//	type RedisConfig struct {
+//		Addr     string `mapstructure:"addr"`
+//		Password string `mapstructure:"password"`
+//		Database       int    `mapstructure:"db"`
+//	}
+//
+//	type LogConfig struct {
+//		LogLevel    string `mapstructure:"log_level"`
+//		Encoding    string `mapstructure:"encoding"`
+//		LogFileName string `mapstructure:"log_file_name"`
+//		MaxSize     int    `mapstructure:"max_size"`
+//		MaxAge      int    `mapstructure:"max_age"`
+//		MaxBackups  int    `mapstructure:"max_backups"`
+//	}
+//
+//	func NewConfig(p string) *viper.Viper {
+//		envConf := os.Getenv("APP_CONF")
+//		if envConf == "" {
+//			envConf = p
+//		}
+//		fmt.Println("load conf file:", envConf)
+//		return getConfig(envConf)
+//	}
+//
+//	func getConfig(path string) *viper.Viper {
+//		conf := viper.New()
+//		conf.SetConfigFile(path)
+//		err := conf.ReadInConfig()
 package config
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"os"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -92,8 +95,22 @@ type RedisConfig struct {
 }
 
 type DatabaseConfig struct {
-	Driver string `mapstructure:"driver"`
-	DSN    string `mapstructure:"dsn"`
+	Driver   string `mapstructure:"driver"`
+	Database string `mapstructure:"database"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+}
+
+func (c *DatabaseConfig) GetDSN() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		c.Username,
+		c.Password,
+		c.Host,
+		c.Port,
+		c.Database,
+	)
 }
 
 type LogConfig struct {
