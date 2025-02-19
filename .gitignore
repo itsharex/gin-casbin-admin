@@ -1,6 +1,7 @@
 /storage/
 .idea
 *.log
-.vscode!/
+.vscode
 cmd/server/wire/wire_gen.go
 configs/config.yaml
+.DS_Store
